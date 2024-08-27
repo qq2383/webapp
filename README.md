@@ -1,15 +1,10 @@
-<style>
-    @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
-   .platform { color: #666;  display: inline-block; margin: 6px 8px;}
-</style>
-
 # Webapp
 
 使用 HTML/CSS 和 JavaScript 构建跨平台 App
 
-<span class="platform"><i class='bi bi-android'></i> android</span>
-<span class="platform"><i class='bi bi-windows'></i> Windows 11</span>
-<span class="platform"><i class='bi bi-apple'></i> iOS</span>
+- android
+- Windows 11
+- iOS
 
 ## 技术支持
 
