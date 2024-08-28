@@ -60,7 +60,7 @@ class _MyApp extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    String url = 'http://loachlhost:${webappConfig.httpPort}/';
+    String url = 'http://localhost:${webappConfig.httpPort}/';
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
