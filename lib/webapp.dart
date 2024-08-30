@@ -1,5 +1,6 @@
 export 'src/config.dart';
 export 'src/webapp_controller.dart';
+export 'src/webapp_delegate.dart';
 export 'src/webapp_widget.dart';
 export 'src/webapp_appbar.dart';
 export 'src/bar_nav.dart';

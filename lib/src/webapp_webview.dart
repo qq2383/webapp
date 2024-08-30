@@ -15,7 +15,6 @@ class WebappWebview extends StatefulWidget {
 }
 
 class _WebappWebview extends State<WebappWebview> {
-  final webviewController = WebappWebviewController();
   late WebappController _controller;
 
   @override
@@ -23,53 +22,47 @@ class _WebappWebview extends State<WebappWebview> {
     super.initState();
 
     _controller = widget.controller;
-    _controller.currentController = webviewController;
-
     _controller.setHome(widget.url ?? '');
 
-    webviewController.setJavaScriptMode(JavaScriptMode.unrestricted);
-
-    webappConfig.navigationDelegate.onFullScreenChanged ??= (fill) {
+    var webviewController = _controller.webvieController;
+    webviewController?.setJavaScriptMode(JavaScriptMode.unrestricted);
+    webappConfig.navigationDelegate.onFullScreenChanged ??= (_, fill) {
       _controller.setFullScreen(fill);
     };
-    webappConfig.navigationDelegate.onPageTitleChanged ??= (title) {
+    webappConfig.navigationDelegate.onPageTitleChanged ??= (_, title) {
       _controller.resetTitle(title);
     };
-    webappConfig.navigationDelegate.onUrlChange ??= (change) {
+    webappConfig.navigationDelegate.onUrlChange ??= (_, change) {
       _controller.resetTitle_();
     };
-    webviewController.setNavigationDelegate(webappConfig.navigationDelegate);
+    webviewController?.setWebappNavigationDelegate(webappConfig.navigationDelegate);
 
     if (webappConfig.userAgent != null) {
-      webviewController.setUserAgent(webappConfig.userAgent);
+      webviewController?.setUserAgent(webappConfig.userAgent);
     }
 
-    if (widget.url == null) {
-      _controller.home();
-    } else {
-      _controller.loadUrl(widget.url!);
-    }
+    _controller.home();
   }
 
   @override
   void dispose() {
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant WebappWebview oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _controller.currentController = webviewController;
   }
 
   @override
   Widget build(BuildContext context) {
     if (webappConfig.isWindows()) {
       return WinWebViewWidget(
-        controller: webviewController.win,
+        controller: _controller.windows,
       );
     } else if (webappConfig.isAndroid() || webappConfig.isIos()) {
-      return WebViewWidget(controller: webviewController.app);
+      return WebViewWidget(controller: _controller.app);
     }
     return const Text('The devices are not supported!');
   }

@@ -40,11 +40,6 @@ class WebappConfig {
     userAgent = agent;
   }
 
-  WebappController? controller;
-  void initController() {
-    controller ??= WebappController();
-  }
-
   WebappTitleFunction windowsTitle = webappWinTitle;
   WebappTitleFunction appTitle = webappAppTitle;
   WebappTitleFunction navigation = webappNavigation;
@@ -110,7 +105,7 @@ class WebappConfig {
         case 'ios':
           ui = {PlatformType.app, PlatformType.ios};
         case 'fuchsia':
-          ui = {PlatformType.app, PlatformType.fuchsia};
+          ui = {PlatformType.fuchsia};
         case 'android':
           ui = {PlatformType.app, PlatformType.android};
       }

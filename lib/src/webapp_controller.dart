@@ -7,6 +7,7 @@ import 'package:webview_win_floating/webview.dart';
 import 'package:webview_win_floating/webview_win_floating.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'webapp_delegate.dart';
 import 'config.dart';
 
 class WebappValue {
@@ -20,6 +21,11 @@ class WebappValue {
 class WebappController extends ValueNotifier<WebappValue> {
   WebappController() : super(WebappValue()) {
     title = _title;
+    if (webappConfig.isWindows()) {
+      _controller = _WinWebviewController();
+    } else if (webappConfig.isApp()) {
+      _controller = _AppWebviewController();
+    }
   }
 
   final String _title = webappConfig.title;
@@ -64,24 +70,11 @@ class WebappController extends ValueNotifier<WebappValue> {
     fullScreen = fill;
   }
 
-  // late Object _controller;
+  WebappWebviewFactory? _controller;
+  WebappWebviewFactory? get webvieController => _controller;
 
-  // void setController(Object controller) {
-  //   _controller = controller;
-  // }
-
-  WebappWebviewController? _controller;
-  WebappWebviewController? get currentController => _controller;
-  set currentController(webviewController) {
-    _controller = webviewController;
-  }
-
-  WinWebViewController? get windows => _controller?.win;
-  WebViewController? get app => _controller?.app;
-  // var _controller;
-  // set controller(var controller) {
-  //   _controller = controller;
-  // }
+  WinWebViewController get windows => _controller as WinWebViewController;
+  WebViewController get app => _controller as WebViewController;
 
   String? _home;
   void setHome(String url) {
@@ -107,274 +100,170 @@ class WebappController extends ValueNotifier<WebappValue> {
   Future<String?>? getTitle() {
     return _controller?.getTitle();
   }
-}
 
-class WebappNavigationDelegate {
-  final NavigationRequestCallback? onNavigationRequest;
-  final PageEventCallback? onPageStarted;
-  final PageEventCallback? onPageFinished;
-  final ProgressCallback? onProgress;
-  final WebResourceErrorCallback? onWebResourceError;
-
-  PageTitleChangedCallback? onPageTitleChanged;
-  FullScreenChangedCallback? onFullScreenChanged;
-  final HistoryChangedCallback? onHistoryChanged;
-  void Function(UrlChange change)? onUrlChange;
-  void Function(HttpAuthRequest request)? onHttpAuthRequest;
-  void Function(HttpResponseError error)? onHttpError;
-
-  WebappNavigationDelegate({
-    this.onNavigationRequest,
-    this.onPageStarted,
-    this.onPageFinished,
-    this.onProgress,
-    this.onWebResourceError,
-    // this.onPageTitleChanged,
-    this.onFullScreenChanged,
-    this.onHistoryChanged,
-    this.onUrlChange,
-    this.onHttpAuthRequest,
-    this.onHttpError,
-  });
-}
-
-class WebappUserAgent {
-  static String init() {
-    if (webappConfig.isWindows()) {
-      return 'Mozilla/5.0 (Windows) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
-    } else if (webappConfig.isAndroid()) {
-      return 'Mozilla/5.0 (Linux) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36';
-    } else if (webappConfig.isIos()) {
-      return 'Mozilla/5.0 (iOS) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36';
-    } else {
-      return '';
-    }
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 }
 
-class WebappWebviewController {
-  late bool? _isWindows;
+abstract class WebappWebviewFactory {
+  Future<void> clearCache();
+  Future<void> clearCookies();
+  Future<void> clearLocalStorage();
+  Future<String?> currentUrl();
+  Future<void> dispose();
+  Future<String?> getTitle();
+  Future<void> goBack();
+  Future<void> goForward();
+  Future<void> loadHtmlString(String html);
+  Future<void> loadUrl(String url);
+  Future<void> loadRequest(Uri uri,
+      {LoadRequestMethod method = LoadRequestMethod.get,
+      Map<String, String> headers = const <String, String>{},
+      Uint8List? body});
+  Future<void> loadRequest_(String url,
+      {LoadRequestMethod method = LoadRequestMethod.get,
+      Map<String, String> headers = const <String, String>{},
+      Uint8List? body});
+  Future<void> openDevTools();
+  Future<void> reload();
+  Future<void> removeJavaScriptChannel(String name);
+  Future<void> runJavaScript(String javaScriptString);
+  Future<Object> runJavaScriptReturningResult(String javaScriptString);
+  Future<void> setBackgroundColor(Color color);
+  void setFullScreen(bool bEnable);
+  Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode);
+  Future<void> setWebappNavigationDelegate(WebappNavigationDelegate delegate);
+  Future<void> setUserAgent(String? userAgent);
+}
 
-  WebappWebviewController() {
-    _isWindows = webappConfig.isWindows();
-    if (_isWindows!) {
-      _win = WinWebViewController();
-    } else {
-      _app = WebViewController();
-    }
-  }
-
-  WinWebViewController? _win;
-  WinWebViewController get win => _win!;
-
-  WebViewController? _app;
-  WebViewController get app => _app!;
-
-  Future<void> addJavaScriptChannel(String name,
-      {required JavaScriptMessageCallback callback}) async {
-    if (_isWindows!) {
-      _win!.addJavaScriptChannel(name, callback: callback);
-    } else {
-      _app!.addJavaScriptChannel(name, onMessageReceived: callback);
-    }
-  }
-
-  Future<void> clearCache() async {
-    if (_isWindows!) {
-      _win!.clearCache();
-    } else {
-      _app!.clearCache();
-    }
-  }
-
-  Future<void> clearCookies() async {
-    if (_isWindows!) {
-      _win!.clearCookies();
-    }
-  }
-
-  Future<void> clearLocalStorage() async {
-    if (_isWindows!) {
-      _win!.clearLocalStorage();
-    } else {
-      _app!.clearLocalStorage();
-    }
-  }
-
-  Future<String?> currentUrl() async {
-    if (_isWindows!) {
-      return _win!.currentUrl();
-    } else {
-      return _app!.currentUrl();
-    }
-  }
-
-  Future<void> dispose() async {
-    if (_isWindows!) {
-      _win!.dispose();
-    }
-  }
-
-  Future<String?> getTitle() async {
-    if (_isWindows!) {
-      return _win!.getTitle();
-    } else {
-      return _app!.getTitle();
-    }
-  }
-
-  Future<void> goBack() async {
-    if (_isWindows!) {
-      _win!.goBack();
-    } else {
-      _app!.goBack();
-    }
-  }
-
-  Future<void> goForward() async {
-    if (_isWindows!) {
-      _win!.goForward();
-    } else {
-      _app!.goForward();
-    }
-  }
-
-  Future<void> loadHtmlString(String html) async {
-    if (_isWindows!) {
-      _win!.loadHtmlString(html);
-    } else {
-      _app!.loadHtmlString(html);
-    }
-  }
-
+class _WinWebviewController extends WinWebViewController
+    implements WebappWebviewFactory {
+  @override
   Future<void> loadUrl(String url) async {
     loadRequest_(url);
   }
 
-  Future<void> loadRequest(Uri uri,
-      {LoadRequestMethod method = LoadRequestMethod.get,
-      Map<String, String> headers = const <String, String>{},
-      Uint8List? body}) async {
-    if (_isWindows!) {
-      _win!.loadRequest(uri, method: method, headers: headers, body: body);
-    } else {
-      _app!.loadRequest(uri, method: method, headers: headers, body: body);
-    }
+  @override
+  Future<void> setWebappNavigationDelegate(
+      WebappNavigationDelegate delegate) async {
+    setNavigationDelegate(WinNavigationDelegate(
+      onNavigationRequest: delegate.onNavigationRequest != null
+          ? (navigationRequest) =>
+              delegate.onNavigationRequest!(this, navigationRequest)
+          : null,
+      onPageTitleChanged: delegate.onPageTitleChanged != null
+          ? (title) {
+              delegate.onPageTitleChanged!(this, title);
+            }
+          : null,
+      onPageStarted: delegate.onPageStarted != null
+          ? (url) {
+              delegate.onPageStarted!(this, url);
+            }
+          : null,
+      onPageFinished: delegate.onPageFinished != null
+          ? (url) {
+              delegate.onPageFinished!(this, url);
+            }
+          : null,
+      onFullScreenChanged: delegate.onFullScreenChanged != null
+          ? (isFullScreen) {
+              delegate.onFullScreenChanged!(this, isFullScreen);
+            }
+          : null,
+      onHistoryChanged: delegate.onHistoryChanged != null
+          ? () {
+              delegate.onHistoryChanged!(this);
+            }
+          : null,
+      onProgress: delegate.onProgress != null
+          ? (progress) {
+              delegate.onProgress!(this, progress);
+            }
+          : null,
+      onWebResourceError: delegate.onWebResourceError != null
+          ? (error) {
+              delegate.onWebResourceError!(this, error);
+            }
+          : null,
+    ));
   }
+}
 
+class _AppWebviewController extends WebViewController
+    implements WebappWebviewFactory {
+  @override
+  Future<void> clearCookies() async {}
+
+  @override
+  Future<void> dispose() async {}
+
+  @override
   Future<void> loadRequest_(String url,
       {LoadRequestMethod method = LoadRequestMethod.get,
       Map<String, String> headers = const <String, String>{},
       Uint8List? body}) async {
-    if (_isWindows!) {
-      _win!.loadRequest_(url, method: method, headers: headers, body: body);
-    } else {
-      _app!.loadRequest(Uri.parse(url),
-          method: method, headers: headers, body: body);
-    }
+    super.loadRequest(Uri.parse(url),
+        method: method, headers: headers, body: body);
   }
 
-  Future<void> openDevTools() async {
-    if (_isWindows!) {
-      _win!.openDevTools();
-    }
+  @override
+  Future<void> loadUrl(String url) async {
+    loadRequest_(url);
   }
 
-  Future<void> reload() async {
-    if (_isWindows!) {
-      _win!.reload();
-    } else {
-      _app!.reload();
-    }
-  }
+  @override
+  Future<void> openDevTools() async {}
 
-  Future<void> removeJavaScriptChannel(String name) async {
-    if (_isWindows!) {
-      _win!.removeJavaScriptChannel(name);
-    } else {
-      _app!.removeJavaScriptChannel(name);
-    }
-  }
+  @override
+  void setFullScreen(bool bEnable) {}
 
-  Future<void> runJavaScript(String javaScriptString) async {
-    if (_isWindows!) {
-      _win!.runJavaScript(javaScriptString);
-    } else {
-      _app!.runJavaScript(javaScriptString);
-    }
-  }
-
-  Future<Object> runJavaScriptReturningResult(String javaScriptString) {
-    if (_isWindows!) {
-      return _win!.runJavaScriptReturningResult(javaScriptString);
-    } else {
-      return _app!.runJavaScriptReturningResult(javaScriptString);
-    }
-  }
-
-  Future<void> setBackgroundColor(Color color) async {
-    if (_isWindows!) {
-      _win!.setBackgroundColor(color);
-    } else {
-      _app!.setBackgroundColor(color);
-    }
-  }
-
-  void setFullScreen(bool bEnable) {
-    if (_isWindows!) {
-      return _win!.setFullScreen(bEnable);
-    }
-  }
-
-  Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {
-    if (_isWindows!) {
-      _win!.setJavaScriptMode(javaScriptMode);
-    } else {
-      _app!.setJavaScriptMode(javaScriptMode);
-    }
-  }
-
-  Future<void> setNavigationDelegate(WebappNavigationDelegate delegate) async {
-    if (_isWindows!) {
-      _win!.setNavigationDelegate(WinNavigationDelegate(
-        onNavigationRequest: delegate.onNavigationRequest,
-        onPageTitleChanged: delegate.onPageTitleChanged,
-        onPageStarted: delegate.onPageStarted,
-        onPageFinished: delegate.onPageFinished,
-        onFullScreenChanged: delegate.onFullScreenChanged,
-        onHistoryChanged: delegate.onHistoryChanged,
-        onProgress: delegate.onProgress,
-        onWebResourceError: delegate.onWebResourceError,
-      ));
-    } else {
-      _app!.setNavigationDelegate(NavigationDelegate(
-        onNavigationRequest: delegate.onNavigationRequest,
-        onPageStarted: delegate.onPageStarted,
-        onPageFinished: delegate.onPageFinished,
-        onProgress: delegate.onProgress,
-        onWebResourceError: delegate.onWebResourceError,
-        onUrlChange: delegate.onUrlChange,
-        onHttpAuthRequest: delegate.onHttpAuthRequest,
-        onHttpError: delegate.onHttpError,
-      ));
-    }
-  }
-
-  Future<void> setUserAgent(String? userAgent) async {
-    if (_isWindows!) {
-      _win!.setUserAgent(userAgent);
-    } else {
-      _app!.setUserAgent(userAgent);
-    }
-  }
-
-  Future<void> addUserAgent(String string) async {
-    if (!_isWindows!) {
-      var agent = await _app?.getUserAgent();
-      var agents = agent?.split(' ');
-      agents?.add(string);
-      var agent0 = agents?.join(' ');
-      await _app!.setUserAgent(agent0);
-    }
+  @override
+  Future<void> setWebappNavigationDelegate(
+      WebappNavigationDelegate delegate) async {
+    setNavigationDelegate(NavigationDelegate(
+      onNavigationRequest: delegate.onNavigationRequest != null
+          ? (navigationRequest) =>
+              delegate.onNavigationRequest!(this, navigationRequest)
+          : null,
+      onPageStarted: delegate.onPageStarted != null
+          ? (url) {
+              delegate.onPageStarted!(this, url);
+            }
+          : null,
+      onPageFinished: delegate.onPageFinished != null
+          ? (url) {
+              delegate.onPageFinished!(this, url);
+            }
+          : null,
+      onProgress: delegate.onProgress != null
+          ? (progress) {
+              delegate.onProgress!(this, progress);
+            }
+          : null,
+      onWebResourceError: delegate.onWebResourceError != null
+          ? (error) {
+              delegate.onWebResourceError!(this, error);
+            }
+          : null,
+      onUrlChange: delegate.onUrlChange != null
+          ? (change) {
+              delegate.onUrlChange!(this, change);
+            }
+          : null,
+      onHttpAuthRequest: delegate.onHttpAuthRequest != null
+          ? (request) {
+              delegate.onHttpAuthRequest!(this, request);
+            }
+          : null,
+      onHttpError: delegate.onHttpError != null
+          ? (error) {
+              delegate.onHttpError!(this, error);
+            }
+          : null,
+    ));
   }
 }
