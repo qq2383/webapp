@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:mime/mime.dart';
-import 'package:webapp/src/config.dart';
+
+import 'webapp_config.dart';
 
 class WebappHttpserver {
   static WebappHttpserver start() {

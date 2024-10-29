@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:webapp/webapp.dart';
 
 void main() {
@@ -33,9 +32,10 @@ class _MyApp extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    String url = 'http://localhost:${webappConfig.httpPort}/';
+    String url =
+        'https://www.meiyd11.tv/'; // 'http://localhost:${webappConfig.httpPort}/';
     return MaterialApp(
-      home: WebAppWidget(url),
+      home: WebappPage(url),
     );
   }
 }

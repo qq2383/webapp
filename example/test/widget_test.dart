@@ -12,7 +12,7 @@ import 'package:webapp/webapp.dart';
 Future<void> main() async {
   testWidgets('Verify Platform version', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const WebAppWidget(''));
+    await tester.pumpWidget(const WebappPage(''));
 
     // Verify that platform version is retrieved.
     expect(

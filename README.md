@@ -80,7 +80,7 @@ webappConfig.httpStart() ``开启 Http Server``
 
 webappConfig.httpStop() ``关闭 Http Server``
 
-WebAppWidget(url)   ``WebView Widget，url: 链接``
+WebappPage(url)   ``WebView Widget，url: 链接``
 
 ## License
 

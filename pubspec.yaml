@@ -1,27 +1,27 @@
 name: webapp
 description: "A new Flutter plugin project."
-version: 0.0.2
+version: 0.0.3
 homepage: 'https://github.com/qq2383/webapp'
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
-  flutter: '>=3.3.0'
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
-  webview_win_floating: ^2.2.9
-  webview_flutter: ^4.8.0
-  window_manager: ^0.3.9
+
+  flutter_inappwebview: ^6.1.5
+  url_launcher: ^6.3.1
+  window_manager: ^0.4.3
   mime: ^1.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

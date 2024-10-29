@@ -1,53 +1,28 @@
-import 'dart:async';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-import 'package:webapp/src/webapp_controller.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'webapp_controller.dart';
 
-typedef WebappNavigationRequestCallback = FutureOr<NavigationDecision> Function(
-    WebappWebviewFactory controller, NavigationRequest navigationRequest);
-typedef WebappPageTitleChangedCallback = void Function(
-    WebappWebviewFactory controller, String title);
-typedef WebappPageEventCallback = void Function(
-    WebappWebviewFactory controller, String url);
-typedef WebappProgressCallback = void Function(
-    WebappWebviewFactory controller, int progress);
-typedef WebappWebResourceErrorCallback = void Function(
-    WebappWebviewFactory controller, WebResourceError error);
-typedef WebappFullScreenChangedCallback = void Function(
-    WebappWebviewFactory controller, bool isFullScreen);
-typedef WebappHistoryChangedCallback = void Function(
-    WebappWebviewFactory controller);
-typedef WebappUrlChangeCallback = void Function(
-    WebappWebviewFactory controller, UrlChange change);
-typedef WebappHttpAuthRequest = void Function(
-    WebappWebviewFactory controller, HttpAuthRequest request);
-typedef WebappHttpError = void Function(
-    WebappWebviewFactory controller, HttpResponseError error);
+class WebappDelegate {
+  void Function(WebappController controller, WebUri? url)? onLoadStart;
+  void Function(WebappController controller, WebUri? url)? onLoadStop;
+  void Function(WebappController controller, int progress)?
+      onProgressChanged;
+  void Function(WebappController controller)? onEnterFullscreen;
+  void Function(WebappController controller)? onExitFullscreen;
+  void Function(WebappController controller, String? title)?
+      onTitleChanged;
+  void Function(WebappController controller, WebResourceRequest request,
+      WebResourceResponse errorResponse)? onReceivedHttpError;
+  void Function(WebappController controller,
+      DownloadStartRequest downloadStartRequest)? onDownloadStartRequest;
 
-class WebappNavigationDelegate {
-  WebappNavigationRequestCallback? onNavigationRequest;
-  WebappPageEventCallback? onPageStarted;
-  WebappPageEventCallback? onPageFinished;
-  WebappProgressCallback? onProgress;
-  WebappWebResourceErrorCallback? onWebResourceError;
-  WebappPageTitleChangedCallback? onPageTitleChanged;
-  WebappFullScreenChangedCallback? onFullScreenChanged;
-  WebappHistoryChangedCallback? onHistoryChanged;
-  WebappUrlChangeCallback? onUrlChange;
-  WebappHttpAuthRequest? onHttpAuthRequest;
-  WebappHttpError? onHttpError;
-
-  WebappNavigationDelegate({
-    this.onNavigationRequest,
-    this.onPageStarted,
-    this.onPageFinished,
-    this.onProgress,
-    this.onWebResourceError,
-    this.onPageTitleChanged,
-    this.onFullScreenChanged,
-    this.onHistoryChanged,
-    this.onUrlChange,
-    this.onHttpAuthRequest,
-    this.onHttpError,
-  });
+  WebappDelegate(
+      {this.onLoadStart,
+      this.onLoadStop,
+      this.onProgressChanged,
+      this.onEnterFullscreen,
+      this.onExitFullscreen,
+      this.onTitleChanged,
+      this.onReceivedHttpError,
+      this.onDownloadStartRequest});
 }

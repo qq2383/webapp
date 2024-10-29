@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
-class SysBar extends StatefulWidget {
-  const SysBar({super.key, required this.max});
+class WebappSysBar extends StatefulWidget {
+  const WebappSysBar({super.key, required this.max});
 
   final bool max;
 
   @override
-  State<StatefulWidget> createState() => _SysBarState();
+  State<StatefulWidget> createState() => _WebappSysBarState();
 }
 
-class _SysBarState extends State<SysBar> {
+class _WebappSysBarState extends State<WebappSysBar> {
   late bool isMax;
 
   @override

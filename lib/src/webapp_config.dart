@@ -1,10 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:window_manager/window_manager.dart';
 
-import '../webapp.dart';
+import 'webapp_navigationbar.dart';
+import 'webapp_controller.dart';
+import 'webapp_delegate.dart';
+import 'webapp_server.dart';
+
 
 enum PlatformType {
   desktop,
@@ -24,10 +30,7 @@ class WebappConfig {
   String title = '';
   String? appIcon;
 
-  // user windows
   Size? size;
-  // bool minimize = true;
-  // bool maximize = true;
   bool sysTitleHide = true;
   bool titleHide = false;
   double? toolbarHeight;
@@ -44,6 +47,7 @@ class WebappConfig {
   WebappTitleFunction appTitle = webappAppTitle;
   WebappTitleFunction navigation = webappNavigation;
   WebappBottomFunction? bottom;
+  WebappBarFunction? bar;
 
   String httpAddress = 'localhost';
   int httpPort = 0;
@@ -90,6 +94,18 @@ class WebappConfig {
 
   Future<void> _initAndroid() async {}
 
+  WebViewEnvironment? webViewEnvironment;
+  Future<void> _initView() async {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      final availableVersion = await WebViewEnvironment.getAvailableVersion();
+      assert(availableVersion != null,
+      'Failed to find an installed WebView2 Runtime or non-stable Microsoft Edge installation.');
+
+      webViewEnvironment = await WebViewEnvironment.create(
+          settings: WebViewEnvironmentSettings(userDataFolder: 'YOUR_CUSTOM_PATH'));
+    }
+  }
+
   late Set<PlatformType> ui;
 
   void init() {
@@ -117,6 +133,7 @@ class WebappConfig {
     } else if (isAndroid()) {
       _initAndroid();
     }
+    _initView();
   }
 
   bool isDesktop() {
@@ -147,12 +164,11 @@ class WebappConfig {
     return ui.contains(PlatformType.web);
   }
 
-  WebappNavigationDelegate _navigationDelegate = WebappNavigationDelegate();
-  WebappNavigationDelegate get navigationDelegate => _navigationDelegate;
-  Future<void> setWebappNavigationDelegate(
-      WebappNavigationDelegate delegate) async {
-    _navigationDelegate = delegate;
-  }
+  WebappDelegate? delegate = WebappDelegate(
+    onTitleChanged: (controller, title) {
+      controller.resetTitle(title ?? '');
+    },
+  );
 }
 
 final WebappConfig webappConfig = WebappConfig();
@@ -162,6 +178,8 @@ typedef WebappTitleFunction = Widget Function(
 
 typedef WebappBottomFunction = PreferredSize Function(
     WebappController controller);
+
+typedef WebappBarFunction = Widget Function(WebappController controller);
 
 Widget webappWinTitle(WebappController controller, WebappValue? value) {
   List<Widget> titles = [];
@@ -226,3 +244,4 @@ Widget webappNavigation(WebappController controller, WebappValue? value) {
     controller: controller,
   );
 }
+

@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
-import '../webapp.dart';
+import 'webapp_appbar.dart';
+import 'webapp_config.dart';
+import 'webapp_controller.dart';
+import 'webapp_webview.dart';
 
-class WebAppWidget extends StatefulWidget {
-  const WebAppWidget(this.url, {super.key});
-
+class WebappPage extends StatefulWidget {
   final String url;
 
+  const WebappPage(String this.url, {super.key}) ;
+  
+
   @override
-  State<WebAppWidget> createState() => _WebAppState();
+  State<StatefulWidget> createState() => _WebappPageState();
+
 }
 
-class _WebAppState extends State<WebAppWidget> {
+class _WebappPageState extends State<WebappPage> {
   final _controller = WebappController();
 
   @override

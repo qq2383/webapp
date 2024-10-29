@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
-import '../webapp.dart';
+import 'webapp_controller.dart';
+import 'webapp_config.dart';
+import 'webapp_sysbar.dart';
 
 class _PreferredSize extends Size {
   _PreferredSize(this.toolbarHeight, this.bottomHeight)
@@ -132,7 +134,7 @@ class _DesktopBarState extends State<DesktopBar> with WindowListener {
                     ),
                   ),
                   webappConfig.sysTitleHide
-                      ? SysBar(max: _value.max)
+                      ? WebappSysBar(max: _value.max)
                       : const SizedBox.shrink(),
                   const SizedBox(width: NavigationToolbar.kMiddleSpacing)
                 ],
