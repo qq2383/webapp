@@ -6,6 +6,11 @@ void main() {
   webappConfig.title = '';
   webappConfig.appIcon = 'assets/web/logo.png';
   webappConfig.httpStart();
+
+  JavaScriptHandler.add('version', (data) {
+    return {'version': '0.0.3'};
+  });
+
   runApp(const MyApp());
 }
 
@@ -32,9 +37,11 @@ class _MyApp extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    String url =
-        'https://www.meiyd11.tv/'; // 'http://localhost:${webappConfig.httpPort}/';
+    String url = 'http://localhost:${webappConfig.httpPort}/';
+        // 'https://www.meiyd11.tv/';
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(),
       home: WebappPage(url),
     );
   }

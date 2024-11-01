@@ -26,7 +26,6 @@ dependencies:
 
 ```
 import 'package:flutter/material.dart';
-
 import 'package:webapp/webapp.dart';
 
 void main() {
@@ -34,6 +33,11 @@ void main() {
   webappConfig.title = '';
   webappConfig.appIcon = 'assets/web/logo.png';
   webappConfig.httpStart();
+
+  JavaScriptHandler.add('version', (data) {
+    return {'version': '0.0.3'};
+  });
+  
   runApp(const MyApp());
 }
 
@@ -64,7 +68,7 @@ class _MyApp extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
-      home: WebAppWidget(url),
+      home: WebappPage(url),
     );
   }
 }
@@ -81,6 +85,18 @@ webappConfig.httpStart() ``开启 Http Server``
 webappConfig.httpStop() ``关闭 Http Server``
 
 WebappPage(url)   ``WebView Widget，url: 链接``
+
+```
+// 注册 Javascript handler 方法
+JavaScriptHandler.add('version', (data) {
+    return {'version': '0.0.3'};
+});
+```
+// javascript code
+webapp.postMessage('version', {}, function(data) {
+    console.log(data); // result Object;
+};
+```
 
 ## License
 

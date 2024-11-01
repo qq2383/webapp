@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>首页</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <link rel="stylesheet" type="text/css" href='css/bi.css'>
     <link rel="stylesheet" type="text/css" href='css/util.css'>
@@ -56,7 +56,8 @@
 
             <p style="color: #cf1f1f;">可能遇到</p>
             <p style="text-align: center;">
-                <span class="grey">域名走丢了?</span> <span class="grey">没有证书</span> <span class="grey">自定义端口</span>
+                <span class="grey">域名走丢了?</span> <span class="grey">没有证书</span> <span
+                    class="grey">自定义端口</span>
             </p>
         </div>
     </section>
@@ -72,7 +73,8 @@
         <h1 class='font12'>开源项目, 安全放心</h1>
         <div class="description container">
             <p>
-                开源项目，放心使用。请访问 <a href='https://github.com/qq2383/webapp' target="_blank">Github</a> 获取。
+                开源项目，放心使用。请访问 <a href='https://github.com/qq2383/webapp' target="_blank">Github</a>
+                获取。
             </p>
         </div>
     </section>
@@ -80,6 +82,12 @@
 <footer>
     Copyright &copy; 2024 Webapp authors.
 </footer>
+
+<script>
+    webapp.postMessage("version", null, function(data) {
+            console.log(data);
+        });
+</script>
 
 </body>
 </html>

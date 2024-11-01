@@ -7,3 +7,4 @@ export 'src/webapp_sysbar.dart';
 export 'src/webapp_server.dart';
 export 'src/webapp_webview.dart';
 export 'src/webapp_page.dart';
+export 'src/webapp_javascript.dart';

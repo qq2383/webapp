@@ -101,8 +101,8 @@ class WebappConfig {
       assert(availableVersion != null,
       'Failed to find an installed WebView2 Runtime or non-stable Microsoft Edge installation.');
 
-      webViewEnvironment = await WebViewEnvironment.create(
-          settings: WebViewEnvironmentSettings(userDataFolder: 'YOUR_CUSTOM_PATH'));
+      // webViewEnvironment = await WebViewEnvironment.create(
+      //     settings: WebViewEnvironmentSettings(userDataFolder: 'YOUR_CUSTOM_PATH'));
     }
   }
 
@@ -164,7 +164,7 @@ class WebappConfig {
     return ui.contains(PlatformType.web);
   }
 
-  WebappDelegate? delegate = WebappDelegate(
+  WebappDelegate delegate = WebappDelegate(
     onTitleChanged: (controller, title) {
       controller.resetTitle(title ?? '');
     },

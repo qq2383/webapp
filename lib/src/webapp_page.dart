@@ -5,10 +5,11 @@ import 'webapp_config.dart';
 import 'webapp_controller.dart';
 import 'webapp_webview.dart';
 
+
 class WebappPage extends StatefulWidget {
   final String url;
 
-  const WebappPage(String this.url, {super.key}) ;
+  const WebappPage(this.url, {super.key}) ;
   
 
   @override
@@ -43,7 +44,7 @@ class _WebappPageState extends State<WebappPage> {
           ? WebappAppbar(controller: _controller, bottom: bottom, toolbarHeight: webappConfig.toolbarHeight,)
           : null,
       body: Center(
-        child: WebappWebview(controller: _controller, url: widget.url),
+        child: WebappWebview(controller: _controller, url: widget.url, key: GlobalKey(),),
       ),
       bottomNavigationBar: webappConfig.isApp()
           ? webappConfig.navigation(_controller, null)

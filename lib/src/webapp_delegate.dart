@@ -15,6 +15,7 @@ class WebappDelegate {
       WebResourceResponse errorResponse)? onReceivedHttpError;
   void Function(WebappController controller,
       DownloadStartRequest downloadStartRequest)? onDownloadStartRequest;
+  void Function(WebappController controller, ConsoleMessage message)? onConsoleMessage;
 
   WebappDelegate(
       {this.onLoadStart,
@@ -24,5 +25,6 @@ class WebappDelegate {
       this.onExitFullscreen,
       this.onTitleChanged,
       this.onReceivedHttpError,
-      this.onDownloadStartRequest});
+      this.onDownloadStartRequest,
+      this.onConsoleMessage});
 }
