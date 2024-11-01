@@ -1,7 +1,7 @@
 name: webapp
 description: "A new Flutter plugin project."
-version: 0.0.3
-homepage: 'https://github.com/qq2383/webapp'
+version: 0.1.1
+homepage: 'https://github.com/qq2383/flutter_webapp'
 
 environment:
   sdk: ^3.5.0
